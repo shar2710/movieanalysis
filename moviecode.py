@@ -8,20 +8,16 @@ DATA EXTRACTION
 '''
 
 #READ THE CSV FILE
-df=pd.read_csv(r"C:\Users\sejal\Downloads\movies.csv")
+df=pd.read_csv(r"C:\Users\sejal\OneDrive\Documents\NOTES\python projects\movieanalysis\movies.csv")
 
 
 '''
 STEP 2
 DATA ANALYSIS
 '''
-#IMPORTING LIBRARIES
-import nltk #TO PERFORM NLP OPERATIONS
-from nltk.corpus import stopwords #TO REMOVE STOPWORDS
 
-#PERFORMING SENTIMENTAL ANALYSIS
-#Cleaning using Stop Words Lists
-stop_words=set(stopwords.words('english'))
+
+
 
 #Creating a dictionary of Positive and Negative words
 positive_words=set()  
@@ -81,8 +77,7 @@ data={'URL_ID':df['URL_ID'],
 
 #SAVING THE OUTPUT DATA TO A CSV FILE OR EXCEL
 df=pd.DataFrame(data)
-df.to_csv(r'output.csv',index=False)
-
+df.to_csv(r'"C:\Users\sejal\OneDrive\Documents\NOTES\python projects\movieanalysis\output.csv"',index=False)
 
 
 
