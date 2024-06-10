@@ -17,10 +17,10 @@ DATA ANALYSIS
 #IMPORTING POSITIVE AND NEGATIVE WORDS
 positive_words=set()  
 negative_words=set()
-with open(r"C:\Users\sejal\Downloads\positive-words.txt") as f:
+with open(r"C:\Users\sejal\OneDrive\Documents\NOTES\python projects\movieanalysis\positive-words.txt") as f:
   for line in f:
     positive_words.add(line.strip())
-with open(r"C:\Users\sejal\Downloads\negative-words.txt") as f:
+with open(r"C:\Users\sejal\OneDrive\Documents\NOTES\python projects\movieanalysis\negative-words.txt") as f:
   for line in f:
     negative_words.add(line.strip())
 
