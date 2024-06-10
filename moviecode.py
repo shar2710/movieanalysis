@@ -1,4 +1,4 @@
-#PERFORM SENTIMENTAL ANALYSIS ON MOVIES.CSV FILE...THE REVIEWS COLUMN IS USED FOR ANALYSIS
+#PERFORM SENTIMENTAL ANALYSIS ON MOVIES.CSV FILE...THE title COLUMN IS USED FOR ANALYSIS
 #IMPORTING LIBRARIES
 import pandas as pd #TO READ EXCEL FILE
 
@@ -34,7 +34,7 @@ subjectivity_score=[]
 for i in range(len(df)):
     pos=0
     neg=0
-    for word in df['keywords'][i].split():
+    for word in df['title'][i].split():
         if word.lower() in positive_words:
             pos+=1
         if word.lower() in negative_words:
@@ -42,7 +42,7 @@ for i in range(len(df)):
     positive_score.append(pos)
     negative_score.append(neg)
     polarity_score.append((pos-neg)/(pos+neg+0.000001))
-    subjectivity_score.append((pos+neg)/(len(df['keywords'][i].split())+0.000001))
+    subjectivity_score.append((pos+neg)/(len(df['title'][i].split())+0.000001))
 
     
 '''
@@ -50,7 +50,8 @@ STEP 3
 OUTPUT DATA STRUCTURE
 '''
 #CREATING A DATAFRAME WHICH INCLUDES ALL THE VARIABLES AND All INPUT VARIABLES IN THE INPUT FILE
-data={'Positive Score':positive_score,
+data={'Index':df['index'],
+      'Positive Score':positive_score,
       'Negative Score':negative_score,
       'Polarity Score':polarity_score,
       'Subjectivity Score':subjectivity_score}
