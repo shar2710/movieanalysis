@@ -1,62 +1,63 @@
-#PERFORM SENTIMENTAL ANALYSIS ON MOVIES.CSV FILE...THE title COLUMN IS USED FOR ANALYSIS
-#IMPORTING LIBRARIES
-import pandas as pd #TO READ EXCEL FILE
-
+'''You need to submit one example project in PDF extraction and 
+relevant text categorized and stored in CSV/text with appropriate tags/labels.'
+the pdf used is sample.pdf 
 '''
-STEP 1 
-DATA EXTRACTION
-'''
-#READ THE CSV FILE
-df=pd.read_csv(r"C:\Users\sejal\OneDrive\Documents\NOTES\python projects\movieanalysis\movies.csv")
-df['keywords'] = df['keywords'].astype(str)
+import PyPDF2
+import nltk
+import csv
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+nltk.download('vader_lexicon')
 
-'''
-STEP 2
-DATA ANALYSIS
-'''
-#IMPORTING POSITIVE AND NEGATIVE WORDS
-positive_words=set()  
-negative_words=set()
-with open(r"C:\Users\sejal\OneDrive\Documents\NOTES\python projects\movieanalysis\positive-words.txt") as f:
-  for line in f:
-    positive_words.add(line.strip())
-with open(r"C:\Users\sejal\OneDrive\Documents\NOTES\python projects\movieanalysis\negative-words.txt") as f:
-  for line in f:
-    negative_words.add(line.strip())
+#extracting text from pdf
+def extract_text(page):
+  text_content = ""
+  text_objects=page.extract_text().splitlines()
+  for line in text_objects:
+    text_content+=line+" "
+  return text_content.strip()
 
-#INITIALISING VARIABLES FOR SENTIMENTAL ANALYSIS
-positive_score=[]
-negative_score=[]
-polarity_score=[]
-subjectivity_score=[]
+#creating a function for sentiment analysis
+def sentiment_analysis(text):
+  sentiment_analyzer=SentimentIntensityAnalyzer()
+  sentiment_score=sentiment_analyzer.polarity_scores(text)['compound']
+  return sentiment_score
 
-#PERFORMING SENTIMENTAL ANALYSIS
-for i in range(len(df)):
-    pos=0
-    neg=0
-    for word in df['title'][i].split():
-        if word.lower() in positive_words:
-            pos+=1
-        if word.lower() in negative_words:
-            neg+=1
-    positive_score.append(pos)
-    negative_score.append(neg)
-    polarity_score.append((pos-neg)/(pos+neg+0.000001))
-    subjectivity_score.append((pos+neg)/(len(df['title'][i].split())+0.000001))
+#opening the pdf file and extracting the text
+pdf_file=open(r'C:\Users\sejal\OneDrive\Documents\NOTES\python projects\movieanalysis\Untitled document.pdf', 'rb')
+pdf_read=PyPDF2.PdfReader(pdf_file)
+page=pdf_read.pages[0]
+text=extract_text(page)
 
-    
-'''
-STEP 3
-OUTPUT DATA STRUCTURE
-'''
-#CREATING A DATAFRAME WHICH INCLUDES ALL THE VARIABLES AND All INPUT VARIABLES IN THE INPUT FILE
-data={'Index':df['index'],
-      'Positive Score':positive_score,
-      'Negative Score':negative_score,
-      'Polarity Score':polarity_score,
-      'Subjectivity Score':subjectivity_score}
 
-#SAVING THE OUTPUT DATA TO A CSV FILE OR EXCEL
-df=pd.DataFrame(data)
-df.to_csv(r"C:\Users\sejal\OneDrive\Documents\NOTES\python projects\movieanalysis\output.csv",index=False)
-print("success")
+#performing sentiment analysis on the extracted text
+if len(text)>0:
+  sentiment_score=sentiment_analysis(text)
+  if sentiment_score>=0.05:
+    sentiment_label='Positive'
+  elif sentiment_score<=-0.05:
+    sentiment_label='Negative'
+  else:
+    sentiment_label='Neutral'
+ 
+
+#creating a dictionary to store the extracted text, sentiment score and sentiment label
+data={"Text":text, 
+      "Sentiment Score":sentiment_score, 
+      "Sentiment Label":sentiment_label
+      }
+
+#csv file to store
+with open(r'C:\Users\sejal\OneDrive\Documents\NOTES\python projects\movieanalysis\sentiment_score.csv', 'w', newline='') as csvfile:
+  writer = csv.writer(csvfile)
+  writer.writerow(data.keys())
+  writer.writerow(data.values())
+
+file=r"C:\Users\sejal\OneDrive\Documents\NOTES\python projects\movieanalysis\sentiment_score.csv"
+#closing the pdf file
+pdf_file.close()
+
+print("Text extracted from the PDF file: ", text)
+print("Sentiment Score: ", sentiment_score)
+print("Sentiment Label: ", sentiment_label)
+print(f"Data stored in CSV file: {file}")
+print("CSV file created successfully!")
